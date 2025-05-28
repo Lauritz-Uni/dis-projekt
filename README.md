@@ -1,2 +1,9 @@
-# dis-projekt
-Projekt til Databases and information systems
+# Movie filter app
+
+# TODO
+
+## Backend
+
+## Database
+
+## Frontend
