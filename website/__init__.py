@@ -9,7 +9,7 @@ def create_app():
     app.config['SECRET_KEY'] = 'your mother is extremely fat'
 
     # PostgreSQL database URI
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://your_user:your_password@localhost:5432/moviesdb'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost:5432/moviesdb'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
