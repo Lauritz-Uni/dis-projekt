@@ -1,0 +1,182 @@
+<html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Dis project website" />
+  <title>FILMTER</title>
+
+  <style>
+    body {
+      font-family: "Playfair Display", serif;
+      background: #3D528F;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+    header {
+      background-image: radial-gradient(#454b84, #324376 80%);
+      color: #f8f8f7;
+      text-shadow: 1px 2px 4px #F58551;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+    }
+    nav button {
+        background-color:#454b84; border: 2px solid #F58551; font-family: "Playfair Display", serif;
+                     color: #fefefe; padding: 16px 32px; text-align: center; text-decoration: none; display: inline-block;
+                     font-size: 19px; margin: 4px 2px; transition-duration: 0.4s; cursor: pointer; border-radius: 12px;
+    }
+    nav button:hover {
+      color: #F58551;
+      transform: scale(1.1);
+    }
+    h1 {
+      padding-left: 30px;
+      text-align: left;
+    }
+    h3 {
+      color: #faf8f8;
+      text-align: center;
+    }
+    h4 {
+      color: #e6a485;
+      text-align: center;
+    }
+    main {
+      padding: 2rem;
+      color: #F58551;
+    }
+    .filter-box {
+      background-color: #435A9D;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 60%;
+      margin: 2rem auto;
+      color: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      text-align: left;
+    }
+    .filter-box label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+    .filter-box input, .filter-box select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+    }
+    button.generate {
+      background-color: #454b84;
+      border: 2px solid #F58551;
+      color: #F58551;
+      font-size: 18px;
+      padding: 10px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button.generate:hover {
+      background-color: #F58551;
+      color: white;
+    }
+
+    section {
+      display: none;
+    }
+
+    section.active {
+      display: block;
+    }
+
+    footer {
+      background-image: linear-gradient(#5f66a1, #435A9D);
+      color: #fff;
+      text-align: center;
+      padding: 1rem 0;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>FILMTER</h1>
+    <nav>
+      <button onclick="showSection('home')">Filter</button>
+      <button onclick="showSection('randomizer')">Randomizer</button>
+      <button onclick="showSection('about')">About</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="active">
+      <h3>Looking for something to watch?</h3>
+      <div class="filter-box">
+        <label for="genre">Genre</label>
+        <input type="text" id="genre" placeholder="e.g. Horror, Action, Comedy">
+
+        <label for="runtime"> Runtime </label>
+        <input type="number" id="runtime" placeholder="0-1200 (minutes)">
+
+        <label for="year">Release Year</label>
+        <input type="number" id="year" placeholder="lowest val - highest val">
+
+        <label for="score">Audience Score (Avg.)</label>
+        <input type="number" id="score" placeholder="1-100">
+
+        <button class="generate" onclick="generateFilms()">Generate Films!</button>
+      </div>
+      <div id="results" style="color:white; padding-top:1rem;"></div>
+    </section>
+
+    <section id="randomizer">
+      <h3>Looking for a random suggestion?</h3>
+      <button class="generate" onclick="generateRandomFilm()">Click to randomize!</button>
+      <div id="randomResult" style="color:white; padding-top:1rem;"></div>
+    </section>
+
+    <section id="about">
+      <h3>About FILMTER</h3>
+      <h4>This film filter ...</h4>
+    </section>
+  </main>
+
+  <footer>
+    <p>Group 72 DIS Project 2025</p>
+  </footer>
+
+  <script>
+
+    function showSection(id) {
+      document.querySelectorAll("section").forEach(sec => {
+        sec.classList.remove("active");
+      });
+      document.getElementById(id).classList.add("active");
+    }
+
+    function generateFilms() {
+      const genre = document.getElementById('genre').value;
+      const runtime = document.getElementById('runtime').value;
+      const year = document.getElementById('year').value;
+      const score = document.getElementById('score').value;
+
+      document.getElementById('results').innerHTML =
+        `<p>Searching for ${genre} films, ${runtime} min, released in ${year}, avg. audience score above ${score}%...</p><p><em>Results:</em> <strong> (FILMS) </strong></p>`;
+    }
+
+    function generateRandomFilm() {
+      const Films = [];
+      const randomFilm = Films[Math.floor(Math.random() * Films.length)];
+      document.getElementById('randomResult').innerHTML = `<p><strong>${randomFilm}</strong> — Here you go!</p>`;
+    }
+  </script>
+</body>
+</html>
