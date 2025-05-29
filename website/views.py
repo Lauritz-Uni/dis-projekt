@@ -21,6 +21,9 @@ def movies():
 
 @views.route('/poster/<movie_title>')
 def get_poster(movie_title):
+    # Check if in database
+    if Movie.query.filter_by(title=movie_title).first() is None:
+        return jsonify({'poster': None})
     try:
         poster_url = mp.get_poster(movie_title)
         return jsonify({'poster': poster_url})
