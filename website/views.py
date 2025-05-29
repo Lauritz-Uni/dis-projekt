@@ -1,4 +1,5 @@
 #store standard standard root to where users can access like homepage. 
+from random import shuffle
 from flask import Blueprint, render_template
 from .models import Movie
 from . import db
@@ -12,5 +13,5 @@ def home():
 
 @views.route('/movies')
 def movies():
-    movies = Movie.query.limit(10).all()
-    return render_template("movies.html", movies=movies, user={"is_authenticated": False})
+    random_movies = Movie.query.order_by(Movie.tomato_meter.desc()).limit(15).all()
+    return render_template("movies.html", movies=random_movies, user={"is_authenticated": False})
