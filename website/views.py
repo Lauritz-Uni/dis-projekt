@@ -1,5 +1,7 @@
 #store standard standard root to where users can access like homepage. 
 from flask import Blueprint, render_template
+from .models import Movie
+from . import db
 
 views = Blueprint('views', __name__)
 
@@ -10,17 +12,5 @@ def home():
 
 @views.route('/movies')
 def movies():
-    movies = [
-        {
-            "title": "The Shawshank Redemption",
-            "rating": 91,
-            "poster": "https://m.media-amazon.com/images/..."
-        },
-        {
-            "title": "The Godfather",
-            "rating": 98,
-            "poster": "https://m.media-amazon.com/images/..."
-        }
-    ]
-    user = type('user', (object,), {'is_authenticated': False})()  # fake user
-    return render_template("movies.html", movies=movies, user=user)
+    movies = Movie.query.limit(10).all()
+    return render_template("movies.html", movies=movies, user={"is_authenticated": False})
