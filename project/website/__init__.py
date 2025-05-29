@@ -3,9 +3,7 @@ from flask import Flask
 def create_app():
     app = Flask(__name__)
 
-    app.config['SECRET_KEY'] = os.getenv('SECRET-KEY', 'fat mom')
-    
-    db.init_app(app)
+    app.config['SECRET_KEY'] = ('SECRET-KEY', 'fat mom')
 
     from .views import views
     from. auth import auth
