@@ -13,5 +13,5 @@ def home():
 
 @views.route('/movies')
 def movies():
-    random_movies = Movie.query.order_by(Movie.tomato_meter.desc()).limit(15).all()
+    random_movies = Movie.query.filter(Movie.tomato_meter > 50).limit(10).all()
     return render_template("movies.html", movies=random_movies, user={"is_authenticated": False})
