@@ -1,5 +1,7 @@
 from . import db
 
+# TODO: Add movie poster
+
 class Movie(db.Model):
     id = db.Column(db.String, primary_key=True)
     title = db.Column(db.String)
