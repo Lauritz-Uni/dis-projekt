@@ -12,7 +12,7 @@ Make sure the csv files are located in website/data-csv/
 
 Run import_data.py (imports data from csv files to databse, takes a couple minutes)
 
-Once finished, you can run main.py and the website will run on [http://127.0.0.1:5000]
+Once finished, you can run main.py and the website will run on [http://127.0.0.1:5000](http://127.0.0.1:5000)
 
 # TODO
 
