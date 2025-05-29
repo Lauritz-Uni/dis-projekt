@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Movies{% endblock %}
+
+{% block content %}
+<h1>Top Movies</h1>
+
+<div class="row">
+  {% for movie in movies %}
+  <div class="col-md-4 mb-4">
+    <div class="card">
+      <img class="card-img-top" src="{{ movie.poster }}" alt="{{ movie.title }}">
+      <div class="card-body">
+        <h5 class="card-title">{{ movie.title }}</h5>
+        <p class="card-text">Rotten Tomatoes: {{ movie.rating }}%</p>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
