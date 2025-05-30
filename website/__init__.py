@@ -6,7 +6,7 @@ db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'your mother is extremely fat'
+    app.config['SECRET_KEY'] = ('SECRET-KEY', 'fat mom')
 
     # PostgreSQL database URI
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost:5432/moviesdb'
