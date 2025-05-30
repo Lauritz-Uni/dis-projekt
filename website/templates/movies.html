@@ -17,4 +17,24 @@
   </div>
   {% endfor %}
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.movie-card').forEach(function (card) {
+    const title = card.dataset.title;
+    const img = card.querySelector('.card-img-top');
+
+    fetch(`/poster/${encodeURIComponent(title)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.poster) {
+          img.src = data.poster;
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching poster:', error);
+      });
+  });
+});
+</script>
 {% endblock %}
