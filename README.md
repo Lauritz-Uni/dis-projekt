@@ -8,7 +8,7 @@ Edit website/__init__.py such that it connects to the moviesdb database
 
 Install required packages from requirements.txt
 
-Make sure the csv files are located in website/data-csv/
+Make sure the csv files are located in "website/data-csv/". You can get them from [this Kaggle page](https://www.kaggle.com/datasets/andrezaza/clapper-massive-rotten-tomatoes-movies-and-reviews/)
 
 Run import_data.py (imports data from csv files to databse, takes a couple minutes)
 
