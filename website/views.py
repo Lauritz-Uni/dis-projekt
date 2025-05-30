@@ -6,7 +6,6 @@ from . import db
 from  sqlalchemy.sql.expression import func, select
 import movieposters as mp
 
-
 views = Blueprint('views', __name__)
 
 @views.route('/')
@@ -17,7 +16,8 @@ def home():
 @views.route('/movies')
 def movies():
     random_movies = Movie.query.order_by(func.random()).filter(Movie.tomato_meter > 50).filter(Movie.audience_score > 50).limit(10).all()
-    return render_template("movies.html", movies=random_movies, user={"is_authenticated": False})
+    user = type('user', (object,), {'is_authenticated': False})()  # fake user
+    return render_template("movies.html", movies=random_movies, user=user)
 
 @views.route('/poster/<movie_title>')
 def get_poster(movie_title):
