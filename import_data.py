@@ -1,13 +1,10 @@
-# === Imports ===
+# Imports
 import pandas as pd
 from pandarallel import pandarallel
 from datetime import datetime
 
-# === Initialize Pandarallel ===
+# Initialize Pandarallel
 pandarallel.initialize(progress_bar=True, verbose=0)
-
-# === Helper Function ===
-
 
 def process_movie_row(row):
     import pandas as pd
