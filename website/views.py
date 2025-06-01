@@ -1,3 +1,4 @@
+import math
 from flask import Blueprint, jsonify, render_template, request
 from .models import Movie
 from . import db
@@ -31,26 +32,45 @@ def get_poster(movie_title):
         return jsonify({'poster': None})
 
 @views.route('/search')
-@views.route('/search')
 def search():
     query = request.args.get('q', '')
-    sanitized_query = escape(query)  # for safe HTML rendering
+    sanitized_query = escape(query)  # for safe HTML output
 
     if not query:
         return render_template("search_results.html", movies=[], query=sanitized_query)
 
+    page = request.args.get('page', 1, type=int)
+    limit = 15
+    offset = (page - 1) * limit
+
+    # Get paginated results
     sql = text("""
         SELECT * FROM movie
         WHERE title ILIKE :search_term
+        ORDER BY title
+        LIMIT :limit OFFSET :offset
     """)
-    search_term = f"%{query}%"
-    results = db.session.execute(sql, {'search_term': search_term}).fetchall()
+    results = db.session.execute(sql, {
+        'search_term': f"%{query}%",
+        'limit': limit,
+        'offset': offset
+    }).fetchall()
+    movies = [dict(row._mapping) for row in results]
 
-    # Convert results to dicts (since raw SQL gives RowProxy objects)
-    movies = []
-    for row in results:
-        movie = dict(row._mapping)  # for SQLAlchemy 1.4+ use row._mapping
-        movies.append(movie)
+    # Get total number of matching results
+    count_sql = text("""
+        SELECT COUNT(*) FROM movie
+        WHERE title ILIKE :search_term
+    """)
+    total = db.session.execute(count_sql, {'search_term': f"%{query}%"}).scalar()
+    total_pages = math.ceil(total / limit)
 
-    user = type('user', (object,), {'is_authenticated': False})()  # fake user
-    return render_template("search_results.html", movies=movies, query=sanitized_query, user=user)
+    user = type('user', (object,), {'is_authenticated': False})()
+    return render_template(
+        "search_results.html",
+        movies=movies,
+        query=sanitized_query,
+        user=user,
+        page=page,
+        total_pages=total_pages
+    )
