@@ -1,10 +1,51 @@
-# Imports
 import pandas as pd
 from pandarallel import pandarallel
 from datetime import datetime
+from dotenv import load_dotenv
+import os
+import psycopg2
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+
+# Load environment variables from .env
+load_dotenv('./.env')
+
+# Environment variables
+DB_NAME = 'moviesdb'
+DB_USER = os.getenv('DB_USER')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
+DB_HOST = os.getenv('DB_HOST', 'localhost')
+DB_PORT = os.getenv('DB_PORT', '5432')
 
 # Initialize Pandarallel
 pandarallel.initialize(progress_bar=True, verbose=0)
+
+def create_database_if_not_exists():
+    try:
+        conn = psycopg2.connect(
+            dbname='postgres',
+            user=DB_USER,
+            password=DB_PASSWORD,
+            host=DB_HOST,
+            port=DB_PORT
+        )
+        conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+        cur = conn.cursor()
+
+        cur.execute("SELECT 1 FROM pg_database WHERE datname = %s", (DB_NAME,))
+        exists = cur.fetchone()
+
+        if not exists:
+            cur.execute(f'CREATE DATABASE "{DB_NAME}"')
+            print(f'[+] Database "{DB_NAME}" created successfully.')
+        else:
+            print(f'[i] Database "{DB_NAME}" already exists.')
+
+        cur.close()
+        conn.close()
+
+    except Exception as e:
+        print("[!] Error creating database:", e)
+        raise
 
 def process_movie_row(row):
     import pandas as pd
@@ -60,6 +101,9 @@ def process_review_row(row):
     }
 
 def main():
+    input("About to recreate and delete everything in 'moviesdb' database. Please close this program if you want to save the data in moviesdb.\nPress enter to continue...")
+    create_database_if_not_exists()
+
     from website import create_app, db
     from website.models import Movie, Review
 
@@ -73,6 +117,7 @@ def main():
         movies_df = pd.read_csv("website/data-csv/rotten_tomatoes_movies.csv")
         movies_df.drop_duplicates(subset="id", inplace=True)
         movie_dicts = movies_df.parallel_apply(process_movie_row, axis=1).tolist()
+        print(movie_dicts[:5])
         movie_objects = [Movie(**md) for md in movie_dicts]
         print(f"[*] Saving {len(movie_objects)} movies...")
         db.session.bulk_save_objects(movie_objects)
@@ -84,23 +129,20 @@ def main():
         reviews_df.rename(columns={'id': 'movie_id'}, inplace=True)
         reviews_df.drop_duplicates(subset="reviewId", inplace=True)
         review_dicts = reviews_df.parallel_apply(process_review_row, axis=1).tolist()
-        # Get a set of valid movie IDs already in the database
         valid_movie_ids = {movie.id for movie in db.session.query(Movie.id).all()}
 
         original_len = len(review_dicts)
-
-        # Filter out reviews for non-existent movies
         review_dicts = [r for r in review_dicts if r['movie_id'] in valid_movie_ids]
-
         skipped = original_len - len(review_dicts)
-        print(f"[!] Skipped {skipped} reviews with unknown movie_id")
 
+        print(f"[!] Skipped {skipped} reviews with unknown movie_id")
         invalid_ids = set(r['movie_id'] for r in reviews_df.to_dict('records')) - valid_movie_ids
         print(f"[!] {len(invalid_ids)} movie_ids in reviews not found in movie table. Sample: {list(invalid_ids)[:5]}")
-        
+
         review_objects = [Review(**rd) for rd in review_dicts]
         print(f"[*] Saving {len(review_objects)} reviews...")
         db.session.bulk_save_objects(review_objects)
+        print("[*] Comitting data...")
         db.session.commit()
         print("[.] Reviews imported and all data committed.")
 

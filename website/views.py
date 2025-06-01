@@ -8,6 +8,8 @@ import movieposters as mp
 
 views = Blueprint('views', __name__)
 
+print("s" if 1+1==2 else "")
+
 @views.route('/')
 def home():
     user = {"name": "Isak"}
@@ -15,7 +17,7 @@ def home():
 
 @views.route('/movies')
 def movies():
-    random_movies = Movie.query.order_by(func.random()).filter(Movie.tomato_meter > 50).filter(Movie.audience_score > 50).limit(10).all()
+    random_movies = Movie.query.filter(Movie.tomato_meter != None, Movie.audience_score != None).order_by(Movie.tomato_meter.desc(), Movie.audience_score.desc()).limit(10).all()
     user = type('user', (object,), {'is_authenticated': False})()  # fake user
     return render_template("movies.html", movies=random_movies, user=user)
 

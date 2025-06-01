@@ -7,11 +7,13 @@
 <div class="row">
   {% for movie in movies %}
   <div class="col-md-4 mb-4">
-    <div class="card">
-      <img class="card-img-top" src="{{ movie.poster }}" alt="{{ movie.title }}">
+    <div class="card" data-title="{{ movie.title }}">
+      <img class="card-img-top poster" src="{{ movie.poster }}" alt="{{ movie.title }}">
       <div class="card-body">
         <h5 class="card-title">{{ movie.title }}</h5>
-        <p class="card-text">Rotten Tomatoes: {{ movie.rating }}%</p>
+        <p class="card-text">Rotten Tomatoes: {{ movie.tomato_meter }}% 
+          <br> Audience Score: {{ movie.audience_score }}%
+          <br> Genre{{ "s" if movie.genre.split(", ") | length > 1 else "" }}: {{ movie.genre }}</p>
       </div>
     </div>
   </div>
@@ -20,9 +22,9 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('.movie-card').forEach(function (card) {
+  document.querySelectorAll('.card').forEach(function (card) {
     const title = card.dataset.title;
-    const img = card.querySelector('.card-img-top');
+    const img = card.querySelector('.poster');
 
     fetch(`/poster/${encodeURIComponent(title)}`)
       .then(res => res.json())
