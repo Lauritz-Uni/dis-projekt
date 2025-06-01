@@ -60,6 +60,12 @@ def process_movie_row(row):
             return dt if pd.notnull(dt) else None
         except Exception:
             return None
+    def handle_genre(input):
+        genre = safe_cast(input, str)
+        try:
+            return genre.replace(" & ", ", ")
+        except Exception:
+            return genre
     return {
         'id': str(row['id']),
         'title': safe_cast(row['title'], str),
@@ -70,7 +76,7 @@ def process_movie_row(row):
         'release_date_theaters': safe_date(row.get('releaseDateTheaters')),
         'release_date_streaming': safe_date(row.get('releaseDateStreaming')),
         'runtime_minutes': safe_cast(row.get('runtimeMinutes'), float),
-        'genre': safe_cast(row.get('genre'), str),
+        'genre': handle_genre(row.get('genre')),
         'original_language': safe_cast(row.get('originalLanguage'), str),
         'director': safe_cast(row.get('director'), str),
         'writer': safe_cast(row.get('writer'), str),
