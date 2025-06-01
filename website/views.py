@@ -34,35 +34,47 @@ def get_poster(movie_title):
 @views.route('/search')
 def search():
     query = request.args.get('q', '')
-    sanitized_query = escape(query)  # for safe HTML output
+    sanitized_query = escape(query)
 
     if not query:
-        return render_template("search_results.html", movies=[], query=sanitized_query)
+        query = ""
 
     page = request.args.get('page', 1, type=int)
     limit = 15
     offset = (page - 1) * limit
 
-    # Get paginated results
+    # Tomato meter filters
+    min_score = request.args.get('min_score', 0, type=int)
+    max_score = request.args.get('max_score', 100, type=int)
+
+    # Main filtered query
     sql = text("""
         SELECT * FROM movie
         WHERE title ILIKE :search_term
+          AND (tomato_meter IS NULL OR (tomato_meter BETWEEN :min_score AND :max_score))
         ORDER BY title
         LIMIT :limit OFFSET :offset
     """)
     results = db.session.execute(sql, {
         'search_term': f"%{query}%",
+        'min_score': min_score,
+        'max_score': max_score,
         'limit': limit,
         'offset': offset
     }).fetchall()
     movies = [dict(row._mapping) for row in results]
 
-    # Get total number of matching results
+    # Count query for pagination
     count_sql = text("""
         SELECT COUNT(*) FROM movie
         WHERE title ILIKE :search_term
+          AND (tomato_meter IS NULL OR (tomato_meter BETWEEN :min_score AND :max_score))
     """)
-    total = db.session.execute(count_sql, {'search_term': f"%{query}%"}).scalar()
+    total = db.session.execute(count_sql, {
+        'search_term': f"%{query}%",
+        'min_score': min_score,
+        'max_score': max_score
+    }).scalar()
     total_pages = math.ceil(total / limit)
 
     user = type('user', (object,), {'is_authenticated': False})()
