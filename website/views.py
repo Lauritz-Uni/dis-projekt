@@ -8,8 +8,6 @@ import movieposters as mp
 
 views = Blueprint('views', __name__)
 
-print("s" if 1+1==2 else "")
-
 @views.route('/')
 def home():
     user = {"name": "Isak"}
