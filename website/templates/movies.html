@@ -11,8 +11,17 @@
       <img class="card-img-top poster" src="{{ movie.poster }}" alt="{{ movie.title }}">
       <div class="card-body">
         <h5 class="card-title">{{ movie.title }}</h5>
-        <p class="card-text">Rotten Tomatoes: {{ movie.tomato_meter }}% 
+        <p class="card-text">
+          {% if movie.tomato_meter %}
+          <br> Rotten Tomatoes: {{ movie.tomato_meter }}% 
+          {% else %}
+          <br> Rotten Tomatoes: N/A
+          {% endif %}</p>
+          {% if movie.audience_score %}
           <br> Audience Score: {{ movie.audience_score }}%
+          {% else %}
+          <br> Audience Score: N/A
+          {% endif %}</p>
           {% if movie.genre %}
           <br> Genre{{ "s" if movie.genre.split(", ") | length > 1 else "" }}: {{ movie.genre }}
           {% else %}

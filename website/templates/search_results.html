@@ -2,51 +2,92 @@
 {% block title %}Search Results{% endblock %}
 
 {% block content %}
-<h1>Search Results for "{{ query }}"</h1>
-
-{% if movies %}
 <div class="row">
-  {% for movie in movies %}
-  <div class="col-md-4 mb-4">
-    <div class="card" data-title="{{ movie.title }}">
-      <img class="card-img-top poster" src="{{ movie.poster }}" alt="{{ movie.title }}">
-      <div class="card-body">
-        <h5 class="card-title">{{ movie.title }}</h5>
-        <p class="card-text">Rotten Tomatoes: {{ movie.tomato_meter }}% 
-          <br> Audience Score: {{ movie.audience_score }}%
-          {% if movie.genre %}
-          <br> Genre{{ "s" if movie.genre.split(", ") | length > 1 else "" }}: {{ movie.genre }}
-          {% else %}
-          <br> Genre: N/A
-          {% endif %}</p></p>
-      </div>
-    </div>
-  </div>
-  {% endfor %}
-</div>
-{% else %}
-<p>No movies found matching your search.</p>
-{% endif %}
+  <!-- Left Sidebar Filters -->
+  <div class="col-md-3">
+    <form method="get" action="{{ url_for('views.search') }}">
 
-<nav aria-label="Search pagination">
-  <ul class="pagination justify-content-center">
-    {% if page > 1 %}
-    <li class="page-item">
-      <a class="page-link" href="{{ url_for('views.search', q=query, page=page-1) }}">Previous</a>
-    </li>
+      <div class="form-group">
+        <label for="q">Title</label>
+        <input type="text" class="form-control" name="q" placeholder="Title" value="{{ query or '' }}">
+      </div>
+
+      <div class="form-group">
+        <label for="genre">Genre</label>
+        <input type="text" class="form-control" name="genre" placeholder="Genre" value="{{ genre or '' }}">
+      </div>
+
+      <div class="form-group">
+        <label for="rating">Rating</label>
+        <input type="text" class="form-control" name="rating" placeholder="Rating" value="{{ rating or '' }}">
+      </div>
+
+      <div class="form-group">
+        <label for="language">Language</label>
+        <input type="text" class="form-control" name="language" placeholder="Language" value="{{ language or '' }}">
+      </div>
+
+      <div class="form-group">
+        <label>Tomato Meter</label>
+        <input type="range" name="min_score" min="0" max="100" value="{{ min_score or 0 }}" oninput="document.getElementById('minOut').textContent = this.value">
+        Min: <span id="minOut">{{ min_score or 0 }}</span>%
+        <br>
+        <input type="range" name="max_score" min="0" max="100" value="{{ max_score or 100 }}" oninput="document.getElementById('maxOut').textContent = this.value">
+        Max: <span id="maxOut">{{ max_score or 100 }}</span>%
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
+    </form>
+  </div>
+
+  <!-- Search Results -->
+  <div class="col-md-9">
+    <h1>Search Results for "{{ query }}"</h1>
+
+    {% if movies %}
+    <div class="row">
+      {% for movie in movies %}
+      <div class="col-md-4 mb-4">
+        <div class="card" data-title="{{ movie.title }}">
+          <img class="card-img-top poster" src="{{ movie.poster }}" alt="{{ movie.title }}">
+          <div class="card-body">
+            <h5 class="card-title">{{ movie.title }}</h5>
+            <p class="card-text">
+              Rotten Tomatoes: {{ movie.tomato_meter if movie.tomato_meter is not none else 'N/A' }}%<br>
+              Audience Score: {{ movie.audience_score if movie.audience_score is not none else 'N/A' }}%<br>
+              Genre: {{ movie.genre or 'N/A' }}
+            </p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p>No movies found matching your search.</p>
     {% endif %}
-    {% for p in range(1, total_pages + 1) %}
-    <li class="page-item {% if p == page %}active{% endif %}">
-      <a class="page-link" href="{{ url_for('views.search', q=query, page=p) }}">{{ p }}</a>
-    </li>
-    {% endfor %}
-    {% if page < total_pages %}
-    <li class="page-item">
-      <a class="page-link" href="{{ url_for('views.search', q=query, page=page+1) }}">Next</a>
-    </li>
-    {% endif %}
-  </ul>
-</nav>
+
+    <!-- Pagination -->
+    <nav aria-label="Search pagination">
+      <ul class="pagination justify-content-start">
+        {% if page > 1 %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url_for('views.search', q=query, genre=genre, rating=rating, language=language, min_score=min_score, max_score=max_score, page=page-1) }}">Previous</a>
+        </li>
+        {% endif %}
+        {% for p in range(1, total_pages + 1) %}
+        <li class="page-item {% if p == page %}active{% endif %}">
+          <a class="page-link" href="{{ url_for('views.search', q=query, genre=genre, rating=rating, language=language, min_score=min_score, max_score=max_score, page=p) }}">{{ p }}</a>
+        </li>
+        {% endfor %}
+        {% if page < total_pages %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url_for('views.search', q=query, genre=genre, rating=rating, language=language, min_score=min_score, max_score=max_score, page=page+1) }}">Next</a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
