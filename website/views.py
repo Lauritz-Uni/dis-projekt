@@ -81,7 +81,9 @@ def search():
     return render_template(
         "search_results.html",
         movies=movies,
-        query=sanitized_query,
+        query=sanitized_query,  
+        max_score=max_score,
+        min_score=min_score,
         user=user,
         page=page,
         total_pages=total_pages
