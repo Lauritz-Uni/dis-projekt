@@ -1,9 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Movies{% endblock %}
+{% block title %}Search Results{% endblock %}
 
 {% block content %}
-<h1>Top Movies</h1>
+<h1>Search Results for "{{ query }}"</h1>
 
+{% if movies %}
 <div class="row">
   {% for movie in movies %}
   <div class="col-md-4 mb-4">
@@ -17,12 +18,15 @@
           <br> Genre{{ "s" if movie.genre.split(", ") | length > 1 else "" }}: {{ movie.genre }}
           {% else %}
           <br> Genre: N/A
-          {% endif %}</p>
+          {% endif %}</p></p>
       </div>
     </div>
   </div>
   {% endfor %}
 </div>
+{% else %}
+<p>No movies found matching your search.</p>
+{% endif %}
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
