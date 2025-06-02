@@ -1,3 +1,5 @@
+*.csv
+*.pyc
 # Don't track environment settings or secrets
 .env
 

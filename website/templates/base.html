@@ -33,10 +33,23 @@
           <a class="nav-item nav-link" id="home" href="/">Home</a>
           <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
           {% else %}
+          <a class="nav-item nav-link" id="movies" href="/movies">Movies</a>
           <a class="nav-item nav-link" id="login" href="/login">Login</a>
           <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
           {% endif %}
         </div>
+        <form class="form-inline ml-auto" method="GET" action="/search">
+          <input
+            class="form-control mr-sm-2"
+            type="search"
+            name="q"
+            placeholder="Search movies"
+            aria-label="Search"
+          />
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+            Search
+          </button>
+        </form>
       </div>
     </nav>
    
