@@ -1,0 +1,17 @@
+*.csv
+*.pyc
+# Don't track environment settings or secrets
+.env
+
+# Don't track Python compiled files
+__pycache__/
+*.pyc
+
+# Don't track database files (if using SQLite)
+*.db
+
+# VS Code settings
+.vscode/
+
+# macOS system files
+.DS_Store

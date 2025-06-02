@@ -38,6 +38,18 @@
           <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
           {% endif %}
         </div>
+        <form class="form-inline ml-auto" method="GET" action="/search">
+          <input
+            class="form-control mr-sm-2"
+            type="search"
+            name="q"
+            placeholder="Search movies"
+            aria-label="Search"
+          />
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+            Search
+          </button>
+        </form>
       </div>
     </nav>
    
