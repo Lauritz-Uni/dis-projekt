@@ -198,6 +198,15 @@ def main():
     input("About to recreate and delete everything in 'moviesdb' database. Please close this program if you want to save the data in moviesdb.\nPress enter to continue...")
     create_database_if_not_exists()
 
+    # Check if csv files exist
+    if not os.path.exists("website/data-csv/rotten_tomatoes_movie_reviews.csv"):
+        print("[!] Error: rotten_tomatoes_movie_reviews.csv file not found. Please place the file in the website/data-csv directory.")
+        return
+
+    if not os.path.exists("website/data-csv/rotten_tomatoes_movies.csv"):
+        print("[!] Error: rotten_tomatoes_movies.csv file not found. Please place the file in the website/data-csv directory.")
+        return
+
     from website import create_app, db
     from website.models import Movie, Review
 
@@ -220,7 +229,7 @@ def main():
 
         print("[*] Reading and processing reviews...")
         reviews_df = pd.read_csv("website/data-csv/rotten_tomatoes_movie_reviews.csv")
-        reviews_df.rename(columns={'id': 'movie_id'}, inplace=True)
+        reviews_df.rename(columns={'id': 'movie_id'}, inplace=True) # rename id column to movie_id to match movie table
         reviews_df.drop_duplicates(subset="reviewId", inplace=True)
         review_dicts = reviews_df.parallel_apply(process_review_row, axis=1).tolist()
         valid_movie_ids = {movie.id for movie in db.session.query(Movie.id).all()}
