@@ -195,7 +195,7 @@ def main():
 
     The script will prompt the user to confirm before deleting all data in 'moviesdb'.
     """
-    input("About to recreate and delete everything in 'moviesdb' database. Please close this program if you want to save the data in moviesdb.\nPress enter to continue...")
+    input(f"About to recreate and delete everything in 'moviesdb' database on {DB_USER}@{DB_HOST}:{DB_PORT}.\nPlease close this program if you want to save the data in moviesdb.\nPress enter to continue...")
     create_database_if_not_exists()
 
     # Check if csv files exist
