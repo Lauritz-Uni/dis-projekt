@@ -20,6 +20,21 @@ DB_PORT = os.getenv('DB_PORT', '5432')
 pandarallel.initialize(progress_bar=True, verbose=0)
 
 def create_database_if_not_exists():
+    """
+    Creates the database if it doesn't exist.
+
+    This function will attempt to connect to the PostgreSQL server specified by the
+    environment variables DB_HOST, DB_PORT, DB_USER, and DB_PASSWORD. If the database
+    specified by DB_NAME does not exist, it will be created.
+
+    If the database already exists, this function will do nothing except print a
+    message indicating that the database already exists.
+
+    If the database cannot be created due to an error, this function will raise an
+    exception with the error message.
+
+    :return: None
+    """
     try:
         conn = psycopg2.connect(
             dbname='postgres',
@@ -48,19 +63,68 @@ def create_database_if_not_exists():
         raise
 
 def process_movie_row(row):
+    """
+    Processes a row of movie data, converting and cleaning its fields.
+
+    This function takes a row from a DataFrame containing movie data and processes its fields,
+    applying type conversions, date parsing, and string handling as necessary. It uses helper
+    functions to safely cast values to specified types, convert strings to datetime objects, 
+    and clean genre strings.
+
+    Args:
+        row: A pandas Series representing a row of movie data.
+
+    Returns:
+        A dictionary with processed movie data where each field has been converted to the 
+        appropriate type or format. Fields include 'id', 'title', 'audience_score', 'tomato_meter',
+        'rating', 'rating_contents', 'release_date_theaters', 'release_date_streaming', 'runtime_minutes',
+        'genre', 'original_language', 'director', 'writer', 'box_office', 'distributor', and 'sound_mix'.
+    """
+
     import pandas as pd
     def safe_cast(value, cast_type):
+        """
+        Safely casts a value to the specified type if possible.
+
+        Args:
+            value: The value to be cast.
+            cast_type: The type to which the value should be cast.
+
+        Returns:
+            The value cast to the specified type if casting is successful and the 
+            value is not null; otherwise, None.
+        """
         try:
             return cast_type(value) if pd.notnull(value) else None
         except Exception:
             return None
     def safe_date(value):
+        """
+        Safely converts a value to a datetime object if possible.
+
+        Args:
+            value: The value to be converted.
+
+        Returns:
+            The value converted to a datetime object if conversion is successful and the 
+            value is not null; otherwise, None.
+        """
         try:
             dt = pd.to_datetime(value, errors='coerce')
             return dt if pd.notnull(dt) else None
         except Exception:
             return None
     def handle_genre(input):
+        """
+        Processes the genre string by replacing ' & ' with ', '.
+
+        Args:
+            input: The genre string to be processed.
+
+        Returns:
+            A processed genre string with ' & ' replaced by ', ', 
+            or the original genre string if an exception occurs.
+        """
         genre = safe_cast(input, str)
         try:
             return genre.replace(" & ", ", ")
@@ -86,6 +150,22 @@ def process_movie_row(row):
     }
 
 def process_review_row(row):
+    """
+    Processes a row of review data, converting and cleaning its fields.
+
+    This function takes a row from a DataFrame containing review data and processes its fields,
+    applying type conversions, date parsing, and string handling as necessary. It uses a helper
+    function to safely cast values to specified types and convert strings to datetime objects.
+
+    Args:
+        row: A pandas Series representing a row of review data.
+
+    Returns:
+        A dictionary with processed review data where each field has been converted to the
+        appropriate type or format. Fields include 'review_id', 'movie_id', 'creation_date',
+        'critic_name', 'is_top_critic', 'original_score', 'review_state', 'publication_name',
+        'review_text', 'score_sentiment', and 'review_url'.
+    """
     import pandas as pd
     def safe_cast(value, cast_type):
         try:
@@ -107,6 +187,14 @@ def process_review_row(row):
     }
 
 def main():
+    """
+    Main entry point for the import_data script.
+
+    This function will drop and recreate all tables in the 'moviesdb' database, then read and process
+    the CSV files in website/data-csv/, and save the data to the database.
+
+    The script will prompt the user to confirm before deleting all data in 'moviesdb'.
+    """
     input("About to recreate and delete everything in 'moviesdb' database. Please close this program if you want to save the data in moviesdb.\nPress enter to continue...")
     create_database_if_not_exists()
 
