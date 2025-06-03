@@ -28,12 +28,77 @@
       </div>
 
       <div class="form-group">
+        <label for="grade">Grade Reviews</label>
+        <select class="form-control" name="grade">
+          <option value="" {% if grade == '' %}selected{% endif %}>All Grades</option>
+          <option value="A+" {% if grade == 'A+' %}selected{% endif %}>A+</option>
+          <option value="A" {% if grade == 'A' %}selected{% endif %}>A</option>
+          <option value="A-" {% if grade == 'A-' %}selected{% endif %}>A-</option>
+          <option value="B+" {% if grade == 'B+' %}selected{% endif %}>B+</option>
+          <option value="B" {% if grade == 'B' %}selected{% endif %}>B</option>
+          <option value="B-" {% if grade == 'B-' %}selected{% endif %}>B-</option>
+          <option value="C+" {% if grade == 'C+' %}selected{% endif %}>C+</option>
+          <option value="C" {% if grade == 'C' %}selected{% endif %}>C</option>
+          <option value="C-" {% if grade == 'C-' %}selected{% endif %}>C-</option>
+          <option value="D" {% if grade == 'D' %}selected{% endif %}>D</option>
+          <option value="F" {% if grade == 'F' %}selected{% endif %}>F</option>
+          <option value="F---" {% if grade == 'F---' %}selected{% endif %}>F---</option>
+          <option value="ZERO STARS" {% if grade == 'ZERO STARS' %}selected{% endif %}>ZERO STARS</option>
+          <option value="ONE STAR" {% if grade == 'ONE STAR' %}selected{% endif %}>ONE STAR</option>
+          <option value="TWO STARS" {% if grade == 'TWO STARS' %}selected{% endif %}>TWO STARS</option>
+          <option value="THREE STARS" {% if grade == 'THREE STARS' %}selected{% endif %}>THREE STARS</option>
+          <option value="FOUR STARS" {% if grade == 'FOUR STARS' %}selected{% endif %}>FOUR STARS</option>
+          <option value="FIVE STARS" {% if grade == 'FIVE STARS' %}selected{% endif %}>FIVE STARS</option>
+        </select>
+      </div>
+
+      <div class="form-group">
         <label>Tomato Meter</label>
         <input type="range" name="min_score" min="0" max="100" value="{{ min_score or 0 }}" oninput="document.getElementById('minOut').textContent = this.value">
         Min: <span id="minOut">{{ min_score or 0 }}</span>%
         <br>
         <input type="range" name="max_score" min="0" max="100" value="{{ max_score or 100 }}" oninput="document.getElementById('maxOut').textContent = this.value">
         Max: <span id="maxOut">{{ max_score or 100 }}</span>%
+      </div>
+
+      <div class="form-group">
+        <label>Runtime (minutes)</label>
+        <input type="range" name="min_runtime" min="0" max="360" value="{{ min_runtime or 0 }}" oninput="document.getElementById('minRuntimeOut').textContent = this.value">
+        Min: <span id="minRuntimeOut">{{ min_runtime or 0 }}</span> min
+        <br>
+        <input type="range" name="max_runtime" min="0" max="360" value="{{ max_runtime or 360 }}" oninput="document.getElementById('maxRuntimeOut').textContent = this.value">
+        Max: <span id="maxRuntimeOut">{{ max_runtime or 300 }}</span> min
+      </div>
+
+      <div class="form-group">
+        <label for="min_critic">Critic Score</label> <br>
+        <input type="range" name="min_critic" min="0" max="100" value="{{ min_critic or 0 }}" 
+              oninput="document.getElementById('minCriticOut').textContent = this.value">
+        Min: <span id="minCriticOut">{{ min_critic or 0 }}</span>%
+
+        <br>
+    
+        <input type="range" name="max_critic" min="0" max="100" value="{{ max_critic or 100 }}" 
+              oninput="document.getElementById('maxCriticOut').textContent = this.value">
+        Max: <span id="maxCriticOut">{{ max_critic or 100 }}</span>%
+      </div>
+
+      <div class="form-group">
+        <label>Release Year (Theaters)</label>
+        <input type="range" name="min_year_theaters" min="1900" max="2025" value="{{ min_year_theaters or 1900 }}" oninput="document.getElementById('minYearTheatersOut').textContent = this.value">
+        Min: <span id="minYearTheatersOut">{{ min_year_theaters or 1900 }}</span>
+        <br>
+        <input type="range" name="max_year_theaters" min="1900" max="2025" value="{{ max_year_theaters or 2025 }}" oninput="document.getElementById('maxYearTheatersOut').textContent = this.value">
+        Max: <span id="maxYearTheatersOut">{{ max_year_theaters or 2025 }}</span>
+      </div>
+
+      <div class="form-group">
+        <label>Release Year (Streaming)</label>
+        <input type="range" name="min_year_streaming" min="1990" max="2025" value="{{ min_year_streaming or 1990 }}" oninput="document.getElementById('minYearStreamingOut').textContent = this.value">
+        Min: <span id="minYearStreamingOut">{{ min_year_streaming or 1990 }}</span>
+        <br>
+        <input type="range" name="max_year_streaming" min="1990" max="2025" value="{{ max_year_streaming or 2025 }}" oninput="document.getElementById('maxYearStreamingOut').textContent = this.value">
+        Max: <span id="maxYearStreamingOut">{{ max_year_streaming or 2025 }}</span>
       </div>
 
       <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
@@ -56,6 +121,7 @@
               Rotten Tomatoes: {{ movie.tomato_meter if movie.tomato_meter is not none else 'N/A' }}%<br>
               Audience Score: {{ movie.audience_score if movie.audience_score is not none else 'N/A' }}%<br>
               Genre: {{ movie.genre or 'N/A' }}
+              Critic Score: {{ movie.avg_critic_score|round(1) if movie.avg_critic_score else 'N/A' }}%<br>
             </p>
           </div>
         </div>
