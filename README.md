@@ -37,4 +37,5 @@ Python 3.12
 
 ## Frontend
 Html + css + javascript - Must-use for web development
+
 [jinja2](https://jinja.palletsprojects.com/en/stable/) - Used in our html templates to make the backend available to the frontend
