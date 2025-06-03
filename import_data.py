@@ -245,6 +245,12 @@ def main():
         review_objects = [Review(**rd) for rd in review_dicts]
         print(f"[*] Saving {len(review_objects)} reviews...")
         db.session.bulk_save_objects(review_objects)
+
+        # Create empty user table
+        # print("[*] Creating user table...")
+        # db.session.execute("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, name TEXT, email TEXT, password TEXT)")
+        # print("[.] User table created.")
+
         print("[*] Comitting data...")
         db.session.commit()
         print("[.] Reviews imported and all data committed.")
