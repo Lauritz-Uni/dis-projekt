@@ -16,3 +16,4 @@ __pycache__/
 # macOS system files
 .DS_Store
 website/data-csv/*.csv
+website/data-csv/*.csv
