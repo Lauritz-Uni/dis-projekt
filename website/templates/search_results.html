@@ -105,18 +105,20 @@
       <div class="row">
         {% for movie in movies %}
           <div class="col-md-4 mb-4">
-            <div class="card" data-title="{{ movie.title }}">
-              <img class="card-img-top poster" src="{{ movie.poster }}" alt="{{ movie.title }}">
-              <div class="card-body">
-                <h5 class="card-title">{{ movie.title }}</h5>
-                <p class="card-text">
-                  Rotten Tomatoes: {{ movie.tomato_meter if movie.tomato_meter is not none else 'N/A' }}%<br>
-                  Audience Score: {{ movie.audience_score if movie.audience_score is not none else 'N/A' }}%<br>
-                  Genre: {{ movie.genre or 'N/A' }}<br>
-                  Critic Score: {{ movie.avg_critic_score|round(1) if movie.avg_critic_score else 'N/A' }}%
-                </p>
+            <a href="{{ url_for('views.movie_detail', movie_id=movie.id) }}" style="text-decoration: none; color: inherit;">
+              <div class="card" data-title="{{ movie.title }}">
+                <img class="card-img-top poster" src="{{ movie.poster }}" alt="{{ movie.title }}">
+                <div class="card-body">
+                  <h5 class="card-title">{{ movie.title }}</h5>
+                  <p class="card-text">
+                    Rotten Tomatoes: {{ movie.tomato_meter if movie.tomato_meter is not none else 'N/A' }}%<br>
+                    Audience Score: {{ movie.audience_score if movie.audience_score is not none else 'N/A' }}%<br>
+                    Genre: {{ movie.genre or 'N/A' }}<br>
+                    Critic Score: {{ movie.avg_critic_score|round(1) if movie.avg_critic_score else 'N/A' }}%
+                  </p>
+                </div>
               </div>
-            </div>
+            </a>
           </div>
         {% endfor %}
       </div>
