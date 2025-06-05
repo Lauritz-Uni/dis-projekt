@@ -34,6 +34,10 @@ def get_poster(movie_title):
 @views.route('/search')
 def search():
     query = request.args.get('q', '')
+    genre = request.args.get('genre', '')
+    rating = request.args.get('rating', '')
+    language = request.args.get('original_language', '')
+
     sanitized_query = escape(query)
 
     if not query:
@@ -42,6 +46,12 @@ def search():
     page = request.args.get('page', 1, type=int)
     limit = 15
     offset = (page - 1) * limit
+    
+    # Get unique dropdown features
+    genres = db.session.execute(text("SELECT DISTINCT genre FROM movie WHERE genre IS NOT NULL ORDER BY genre")).scalars().all()
+    ratings = db.session.execute(text("SELECT DISTINCT rating FROM movie WHERE rating IS NOT NULL ORDER BY rating")).scalars().all()
+    languages = db.session.execute(text("SELECT DISTINCT original_language FROM movie WHERE original_language IS NOT NULL ORDER BY original_language")).scalars().all()
+
 
     # Tomato meter filters
     min_score = request.args.get('min_score', 0, type=int)
@@ -52,39 +62,59 @@ def search():
         SELECT * FROM movie
         WHERE title ILIKE :search_term
           AND (tomato_meter IS NULL OR (tomato_meter BETWEEN :min_score AND :max_score))
+          AND (:genre = '' OR genre = :genre)
+          AND (:rating = '' OR rating = :rating)
+          AND (:original_language = '' OR original_language = :original_language)
         ORDER BY title
         LIMIT :limit OFFSET :offset
     """)
-    results = db.session.execute(sql, {
+    search_results  = db.session.execute(sql, {
         'search_term': f"%{query}%",
         'min_score': min_score,
         'max_score': max_score,
+        'genre': genre,
+        'rating': rating,
+        'original_language': language,
         'limit': limit,
         'offset': offset
     }).fetchall()
-    movies = [dict(row._mapping) for row in results]
+
 
     # Count query for pagination
     count_sql = text("""
         SELECT COUNT(*) FROM movie
         WHERE title ILIKE :search_term
           AND (tomato_meter IS NULL OR (tomato_meter BETWEEN :min_score AND :max_score))
+          AND (:genre = '' OR genre = :genre)
+          AND (:rating = '' OR rating = :rating)
+          AND (:original_language = '' OR original_language = :original_language)
     """)
     total = db.session.execute(count_sql, {
         'search_term': f"%{query}%",
         'min_score': min_score,
-        'max_score': max_score
+        'max_score': max_score,
+        'genre': genre,
+        'rating': rating,
+        'original_language': language
     }).scalar()
+
+
     total_pages = math.ceil(total / limit)
 
     user = type('user', (object,), {'is_authenticated': False})()
     return render_template(
         "search_results.html",
-        movies=movies,
+        movies=search_results ,
         query=sanitized_query,  
         max_score=max_score,
         min_score=min_score,
         user=user,
         page=page,
-        total_pages=total_pages
+        total_pages=total_pages,
+        genres=genres,
+        ratings=ratings,
+        languages=languages,
+        genre=genre,
+        rating=rating,
+        original_language=language
     )

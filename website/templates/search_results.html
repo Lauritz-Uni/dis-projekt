@@ -14,18 +14,34 @@
 
       <div class="form-group">
         <label for="genre">Genre</label>
-        <input type="text" class="form-control" name="genre" placeholder="Genre" value="{{ genre or '' }}">
+        <select class="form-control" name="genre">
+          <option value="">All Genres</option>
+          {% for g in genres %}
+            <option value="{{ g }}" {% if genre == g %}selected{% endif %}>{{ g }}</option>
+          {% endfor %}
+        </select>
       </div>
 
       <div class="form-group">
         <label for="rating">Rating</label>
-        <input type="text" class="form-control" name="rating" placeholder="Rating" value="{{ rating or '' }}">
+        <select class="form-control" name="rating">
+          <option value="">All Ratings</option>
+          {% for r in ratings %}
+            <option value="{{ r }}" {% if rating == r %}selected{% endif %}>{{ r }}</option>
+          {% endfor %}
+        </select>
       </div>
 
       <div class="form-group">
         <label for="language">Language</label>
-        <input type="text" class="form-control" name="language" placeholder="Language" value="{{ language or '' }}">
+        <select class="form-control" name="original_language">
+          <option value="">All Languages</option>
+          {% for lang in languages %}
+            <option value="{{ lang }}" {% if original_language == lang %}selected{% endif %}>{{ lang }}</option>
+          {% endfor %}
+        </select>
       </div>
+
 
       <div class="form-group">
         <label>Tomato Meter</label>
