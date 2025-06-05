@@ -5,7 +5,7 @@ You must have PostgreSQL 17.4 or newer installed (older versions might work, but
 
 Install required packages from requirements.txt
 
-Open a PostgreSQL server and save the credentials in .env file in the root folder (look at the .env-sample file for how to set database credentials).
+Open a PostgreSQL server and save the credentials in a .env file in the root folder (look at the .env-sample file for how to set database credentials).
 
 Make sure the csv files are located in "website/data-csv/". You can get them from [this Kaggle page](https://www.kaggle.com/datasets/andrezaza/clapper-massive-rotten-tomatoes-movies-and-reviews/)
 
