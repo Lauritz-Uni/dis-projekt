@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}{{ movie.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-4">
+      <img id="posterImage" src="{{ url_for('static', filename='default_poster.jpg') }}" class="img-fluid" alt="{{ movie.title }}">
+    </div>
+    <div class="col-md-8">
+      <h2>{{ movie.title }}</h2>
+      <p><strong>Genre:</strong> {{ movie.genre or 'N/A' }}</p>
+      <p><strong>Rating:</strong> {{ movie.rating or 'N/A' }}</p>
+      <p><strong>Audience Score:</strong> {{ movie.audience_score or 'N/A' }}%</p>
+      <p><strong>Tomato Meter:</strong> {{ movie.tomato_meter or 'N/A' }}%</p>
+      <p><strong>Language:</strong> {{ movie.original_language or 'N/A' }}</p>
+      <p><strong>Runtime:</strong> {{ movie.runtime_minutes }} minutes</p>
+      <p><strong>Release Date (Theaters):</strong> {{ movie.release_date_theaters }}</p>
+      <p><strong>Release Date (Streaming):</strong> {{ movie.release_date_streaming }}</p>
+      <p><strong>Director:</strong> {{ movie.director }}</p>
+      <p><strong>Writer:</strong> {{ movie.writer }}</p>
+      <p><strong>Box Office:</strong> {{ movie.box_office }}</p>
+    </div>
+  </div>
+
+  <hr>
+
+  <h3 class="mt-4">Reviews</h3>
+  {% if reviews %}
+    <ul class="list-group">
+      {% for review in reviews %}
+        <li class="list-group-item">
+          <strong>{{ review.critic_name }}</strong> from <em>{{ review.publication_name }}</em><br>
+          <small>{{ review.creation_date }}</small><br>
+          <p>{{ review.review_text }}</p>
+          <span class="badge badge-secondary">{{ review.original_score or 'No Score' }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No reviews available.</p>
+  {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const posterImg = document.getElementById('posterImage');
+  fetch(`/poster/{{ movie.title | urlencode }}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.poster) posterImg.src = data.poster;
+    });
+});
+</script>
+{% endblock %}

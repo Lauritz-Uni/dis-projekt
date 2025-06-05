@@ -47,7 +47,7 @@ def search():
     min_score = request.args.get('min_score', 0, type=int)
     max_score = request.args.get('max_score', 100, type=int)
     min_runtime = request.args.get("min_runtime", 0, type=int)
-    max_runtime = request.args.get("max_runtime", 300, type=int)
+    max_runtime = request.args.get("max_runtime", 360, type=int)
     min_critic = request.args.get('min_critic', 0, type=int)
     max_critic = request.args.get('max_critic', 100, type=int)
     grade = request.args.get('grade')
@@ -131,6 +131,7 @@ def search():
 
     results = db.session.execute(sql, params).fetchall()
     movies = [dict(row._mapping) for row in results]
+    print(len(movies))
 
     count_sql = text("""
         SELECT COUNT(*) FROM movie
@@ -170,3 +171,10 @@ def search():
         page=page,
         total_pages=total_pages
     )
+
+@views.route('/movie/<movie_id>')
+def movie_detail(movie_id):
+    movie = Movie.query.filter_by(id=movie_id).first_or_404()
+    reviews = movie.reviews
+    user = type('user', (object,), {'is_authenticated': False})()
+    return render_template('movie_detail.html', movie=movie, reviews=reviews, user=user)
