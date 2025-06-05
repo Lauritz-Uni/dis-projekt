@@ -46,6 +46,25 @@ def search():
     page = request.args.get('page', 1, type=int)
     limit = 15
     offset = (page - 1) * limit
+
+    #filter for minimum and maximum runtime in minutes
+    min_runtime = request.args.get("min_runtime", 0, type=int)
+    max_runtime = request.args.get("max_runtime", 300, type=int)
+
+    #filter for AVG critic scores
+    min_critic = request.args.get('min_critic', 0, type=int)
+    max_critic = request.args.get('max_critic', 100, type=int)
+    grade = request.args.get('grade')
+
+    # filter for top_critic scores
+    min_critic = request.args.get("min_critic", 0, type=int)
+    max_critic = request.args.get("max_critic", 100, type=int)
+
+    # filter for release dates, both in theaters and for streaming services.
+    min_year_theaters = request.args.get("min_year_theaters", 1900, type=int)
+    max_year_theaters = request.args.get("max_year_theaters", 2025, type=int)
+    min_year_streaming = request.args.get("min_year_streaming", 1990, type=int)
+    max_year_streaming = request.args.get("max_year_streaming", 2025, type=int)
     
     # Get unique dropdown features
     genres = db.session.execute(text("SELECT DISTINCT genre FROM movie WHERE genre IS NOT NULL ORDER BY genre")).scalars().all()
