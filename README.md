@@ -47,6 +47,8 @@ Python 3.12
 
 [pandarallel](https://pypi.org/project/pandarallel/) - Parallelizes pandas operations, making it much faster
 
+[Bootstrap](https://getbootstrap.com) - To make the website look clean
+
 ## Database
 [PostgreSQL 17.4](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads) - The database software
 
