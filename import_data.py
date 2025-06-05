@@ -220,7 +220,6 @@ def main():
         movies_df = pd.read_csv("website/data-csv/rotten_tomatoes_movies.csv")
         movies_df.drop_duplicates(subset="id", inplace=True)
         movie_dicts = movies_df.parallel_apply(process_movie_row, axis=1).tolist()
-        print(movie_dicts[:5])
         movie_objects = [Movie(**md) for md in movie_dicts]
         print(f"[*] Saving {len(movie_objects)} movies...")
         db.session.bulk_save_objects(movie_objects)
