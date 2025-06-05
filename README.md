@@ -15,8 +15,7 @@ Once finished, you can run main.py and the website will run on [http://127.0.0.1
 
 
 ## Interacting with app:
-You start at the Home page. Via. the navigation bar you have the option to either view a curation of Top Movies by pressing "Movies", Log in og Sign up by pressing "Login" or "Sign Up", or search for specific movies via. the search bar in the top right corner. 
-To access the film filters you can simply press the "search" button, no typed input is needed. 
+You start at the Home page. Via. the navigation bar you have the option to either view a curation of Top Movies by pressing "Movies", or search for specific movies via. the search bar in the top right corner. To access the film filters you can simply press the "search" button, no typed input is needed. 
 
 At this point you are presented with a variety of feature filters which you can alter based on your preferences, by either typing, selecting from a drop-down menu, or adjusting min-max slider bars. Once you are finished, press the "Apply Filters" button, and a list of movies matching your preferences will be generated (Please allow the movie posters some time to load :) ).
 
