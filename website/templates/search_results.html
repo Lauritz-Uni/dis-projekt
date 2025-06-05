@@ -2,14 +2,16 @@
 {% block title %}Search Results{% endblock %}
 
 {% block content %}
+<!-- Load noUiSlider -->
+<link href="https://cdn.jsdelivr.net/npm/nouislider@15.7.0/dist/nouislider.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.0/dist/nouislider.min.js"></script>
+
 <div class="row">
-  <!-- Left Sidebar Filters -->
   <div class="col-md-3">
     <form method="get" action="{{ url_for('views.search') }}">
-
       <div class="form-group">
         <label for="q">Title</label>
-        <input type="text" class="form-control" name="q" placeholder="Title" value="{{ query or '' }}">
+        <input type="text" class="form-control" name="q" value="{{ query or '' }}">
       </div>
 
       <div class="form-group">
@@ -42,141 +44,102 @@
         </select>
       </div>
 
-
       <div class="form-group">
         <label for="grade">Grade Reviews</label>
         <select class="form-control" name="grade">
-          <option value="" {% if grade == '' %}selected{% endif %}>All Grades</option>
-          <option value="A+" {% if grade == 'A+' %}selected{% endif %}>A+</option>
-          <option value="A" {% if grade == 'A' %}selected{% endif %}>A</option>
-          <option value="A-" {% if grade == 'A-' %}selected{% endif %}>A-</option>
-          <option value="B+" {% if grade == 'B+' %}selected{% endif %}>B+</option>
-          <option value="B" {% if grade == 'B' %}selected{% endif %}>B</option>
-          <option value="B-" {% if grade == 'B-' %}selected{% endif %}>B-</option>
-          <option value="C+" {% if grade == 'C+' %}selected{% endif %}>C+</option>
-          <option value="C" {% if grade == 'C' %}selected{% endif %}>C</option>
-          <option value="C-" {% if grade == 'C-' %}selected{% endif %}>C-</option>
-          <option value="D" {% if grade == 'D' %}selected{% endif %}>D</option>
-          <option value="F" {% if grade == 'F' %}selected{% endif %}>F</option>
-          <option value="F---" {% if grade == 'F---' %}selected{% endif %}>F---</option>
-          <option value="ZERO STARS" {% if grade == 'ZERO STARS' %}selected{% endif %}>ZERO STARS</option>
-          <option value="ONE STAR" {% if grade == 'ONE STAR' %}selected{% endif %}>ONE STAR</option>
-          <option value="TWO STARS" {% if grade == 'TWO STARS' %}selected{% endif %}>TWO STARS</option>
-          <option value="THREE STARS" {% if grade == 'THREE STARS' %}selected{% endif %}>THREE STARS</option>
-          <option value="FOUR STARS" {% if grade == 'FOUR STARS' %}selected{% endif %}>FOUR STARS</option>
-          <option value="FIVE STARS" {% if grade == 'FIVE STARS' %}selected{% endif %}>FIVE STARS</option>
+          <option value="">All Grades</option>
+          {% for g in ['A+','A','A-','B+','B','B-','C+','C','C-','D','F','F---','ZERO STARS','ONE STAR','TWO STARS','THREE STARS','FOUR STARS','FIVE STARS'] %}
+            <option value="{{ g }}" {% if grade == g %}selected{% endif %}>{{ g }}</option>
+          {% endfor %}
         </select>
       </div>
 
+      {# Dual sliders start here #}
       <div class="form-group">
         <label>Tomato Meter</label>
-        <input type="range" name="min_score" min="0" max="100" value="{{ min_score or 0 }}" oninput="document.getElementById('minOut').textContent = this.value">
-        Min: <span id="minOut">{{ min_score or 0 }}</span>%
-        <br>
-        <input type="range" name="max_score" min="0" max="100" value="{{ max_score or 100 }}" oninput="document.getElementById('maxOut').textContent = this.value">
-        Max: <span id="maxOut">{{ max_score or 100 }}</span>%
+        <div id="tomatoSlider"></div>
+        <input type="hidden" name="min_score" id="min_score" value="{{ min_score or 0 }}">
+        <input type="hidden" name="max_score" id="max_score" value="{{ max_score or 100 }}">
+        <div>Min: <span id="minScoreOut">{{ min_score or 0 }}</span>% — Max: <span id="maxScoreOut">{{ max_score or 100 }}</span>%</div>
       </div>
 
       <div class="form-group">
         <label>Runtime (minutes)</label>
-        <input type="range" name="min_runtime" min="0" max="360" value="{{ min_runtime or 0 }}" oninput="document.getElementById('minRuntimeOut').textContent = this.value">
-        Min: <span id="minRuntimeOut">{{ min_runtime or 0 }}</span> min
-        <br>
-        <input type="range" name="max_runtime" min="0" max="360" value="{{ max_runtime or 360 }}" oninput="document.getElementById('maxRuntimeOut').textContent = this.value">
-        Max: <span id="maxRuntimeOut">{{ max_runtime or 300 }}</span> min
+        <div id="runtimeSlider"></div>
+        <input type="hidden" name="min_runtime" id="min_runtime" value="{{ min_runtime or 0 }}">
+        <input type="hidden" name="max_runtime" id="max_runtime" value="{{ max_runtime or 360 }}">
+        <div>Min: <span id="minRuntimeOut">{{ min_runtime or 0 }}</span> — Max: <span id="maxRuntimeOut">{{ max_runtime or 360 }}</span></div>
       </div>
 
       <div class="form-group">
-        <label for="min_critic">Critic Score</label> <br>
-        <input type="range" name="min_critic" min="0" max="100" value="{{ min_critic or 0 }}" 
-              oninput="document.getElementById('minCriticOut').textContent = this.value">
-        Min: <span id="minCriticOut">{{ min_critic or 0 }}</span>%
-
-        <br>
-    
-        <input type="range" name="max_critic" min="0" max="100" value="{{ max_critic or 100 }}" 
-              oninput="document.getElementById('maxCriticOut').textContent = this.value">
-        Max: <span id="maxCriticOut">{{ max_critic or 100 }}</span>%
+        <label>Critic Score</label>
+        <div id="criticSlider"></div>
+        <input type="hidden" name="min_critic" id="min_critic" value="{{ min_critic or 0 }}">
+        <input type="hidden" name="max_critic" id="max_critic" value="{{ max_critic or 100 }}">
+        <div>Min: <span id="minCriticOut">{{ min_critic or 0 }}</span>% — Max: <span id="maxCriticOut">{{ max_critic or 100 }}</span>%</div>
       </div>
 
       <div class="form-group">
         <label>Release Year (Theaters)</label>
-        <input type="range" name="min_year_theaters" min="1900" max="2025" value="{{ min_year_theaters or 1900 }}" oninput="document.getElementById('minYearTheatersOut').textContent = this.value">
-        Min: <span id="minYearTheatersOut">{{ min_year_theaters or 1900 }}</span>
-        <br>
-        <input type="range" name="max_year_theaters" min="1900" max="2025" value="{{ max_year_theaters or 2025 }}" oninput="document.getElementById('maxYearTheatersOut').textContent = this.value">
-        Max: <span id="maxYearTheatersOut">{{ max_year_theaters or 2025 }}</span>
+        <div id="theaterYearSlider"></div>
+        <input type="hidden" name="min_year_theaters" id="min_year_theaters" value="{{ min_year_theaters or 1900 }}">
+        <input type="hidden" name="max_year_theaters" id="max_year_theaters" value="{{ max_year_theaters or 2025 }}">
+        <div>Min: <span id="minTheaterYearOut">{{ min_year_theaters or 1900 }}</span> — Max: <span id="maxTheaterYearOut">{{ max_year_theaters or 2025 }}</span></div>
       </div>
 
       <div class="form-group">
         <label>Release Year (Streaming)</label>
-        <input type="range" name="min_year_streaming" min="1990" max="2025" value="{{ min_year_streaming or 1990 }}" oninput="document.getElementById('minYearStreamingOut').textContent = this.value">
-        Min: <span id="minYearStreamingOut">{{ min_year_streaming or 1990 }}</span>
-        <br>
-        <input type="range" name="max_year_streaming" min="1990" max="2025" value="{{ max_year_streaming or 2025 }}" oninput="document.getElementById('maxYearStreamingOut').textContent = this.value">
-        Max: <span id="maxYearStreamingOut">{{ max_year_streaming or 2025 }}</span>
+        <div id="streamingYearSlider"></div>
+        <input type="hidden" name="min_year_streaming" id="min_year_streaming" value="{{ min_year_streaming or 1990 }}">
+        <input type="hidden" name="max_year_streaming" id="max_year_streaming" value="{{ max_year_streaming or 2025 }}">
+        <div>Min: <span id="minStreamingYearOut">{{ min_year_streaming or 1990 }}</span> — Max: <span id="maxStreamingYearOut">{{ max_year_streaming or 2025 }}</span></div>
       </div>
 
       <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
     </form>
   </div>
 
-  <!-- Search Results -->
   <div class="col-md-9">
     <h1>Search Results for "{{ query }}"</h1>
-
     {% if movies %}
-    <div class="row">
-      {% for movie in movies %}
-      <div class="col-md-4 mb-4">
-        <div class="card" data-title="{{ movie.title }}">
-          <img class="card-img-top poster" src="{{ movie.poster }}" alt="{{ movie.title }}">
-          <div class="card-body">
-            <h5 class="card-title">{{ movie.title }}</h5>
-            <p class="card-text">
-              Rotten Tomatoes: {{ movie.tomato_meter if movie.tomato_meter is not none else 'N/A' }}%<br>
-              Audience Score: {{ movie.audience_score if movie.audience_score is not none else 'N/A' }}%<br>
-              Genre: {{ movie.genre or 'N/A' }}
-              Critic Score: {{ movie.avg_critic_score|round(1) if movie.avg_critic_score else 'N/A' }}%<br>
-            </p>
+      <div class="row">
+        {% for movie in movies %}
+          <div class="col-md-4 mb-4">
+            <div class="card" data-title="{{ movie.title }}">
+              <img class="card-img-top poster" src="{{ movie.poster }}" alt="{{ movie.title }}">
+              <div class="card-body">
+                <h5 class="card-title">{{ movie.title }}</h5>
+                <p class="card-text">
+                  Rotten Tomatoes: {{ movie.tomato_meter if movie.tomato_meter is not none else 'N/A' }}%<br>
+                  Audience Score: {{ movie.audience_score if movie.audience_score is not none else 'N/A' }}%<br>
+                  Genre: {{ movie.genre or 'N/A' }}<br>
+                  Critic Score: {{ movie.avg_critic_score|round(1) if movie.avg_critic_score else 'N/A' }}%
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
+        {% endfor %}
       </div>
-      {% endfor %}
-    </div>
     {% else %}
-    <p>No movies found matching your search.</p>
+      <p>No movies found matching your search.</p>
     {% endif %}
 
     {% set pag_start = page - 4 if page - 4 > 0 else 1 %}
     {% set pag_end = page + 4 if page + 4 <= total_pages else total_pages %}
-    <!-- Pagination -->
     <nav aria-label="Search pagination">
       <ul class="pagination justify-content-start">
         {% if page > 1 %}
-        <li class="page-item">
-          <a class="page-link" href="{{ url_for('views.search', q=query, genre=genre, rating=rating, language=language, min_score=min_score, max_score=max_score, page=1) }}">First</a>
-        </li>
-        {% endif %}
-        {% if page > 1 %}
-        <li class="page-item">
-          <a class="page-link" href="{{ url_for('views.search', q=query, genre=genre, rating=rating, language=language, min_score=min_score, max_score=max_score, page=page-1) }}">Previous</a>
-        </li>
+        <li class="page-item"><a class="page-link" href="{{ url_for('views.search', page=1) }}">First</a></li>
+        <li class="page-item"><a class="page-link" href="{{ url_for('views.search', page=page-1) }}">Previous</a></li>
         {% endif %}
         {% for p in range(pag_start, pag_end + 1) %}
-        <li class="page-item {% if p == page %}active{% endif %}">
-          <a class="page-link" href="{{ url_for('views.search', q=query, genre=genre, rating=rating, language=language, min_score=min_score, max_score=max_score, page=p) }}">{{ p }}</a>
-        </li>
+          <li class="page-item {% if p == page %}active{% endif %}">
+            <a class="page-link" href="{{ url_for('views.search', page=p) }}">{{ p }}</a>
+          </li>
         {% endfor %}
         {% if page < total_pages %}
-        <li class="page-item">
-          <a class="page-link" href="{{ url_for('views.search', q=query, genre=genre, rating=rating, language=language, min_score=min_score, max_score=max_score, page=page+1) }}">Next</a>
-        </li>
-        {% endif %}
-        {% if page < total_pages %}
-        <li class="page-item">
-          <a class="page-link" href="{{ url_for('views.search', q=query, genre=genre, rating=rating, language=language, min_score=min_score, max_score=max_score, page=total_pages) }}">Last</a>
-        </li>
+        <li class="page-item"><a class="page-link" href="{{ url_for('views.search', page=page+1) }}">Next</a></li>
+        <li class="page-item"><a class="page-link" href="{{ url_for('views.search', page=total_pages) }}">Last</a></li>
         {% endif %}
       </ul>
     </nav>
@@ -188,18 +151,35 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('.card').forEach(function (card) {
     const title = card.dataset.title;
     const img = card.querySelector('.poster');
-
     fetch(`/poster/${encodeURIComponent(title)}`)
       .then(res => res.json())
-      .then(data => {
-        if (data.poster) {
-          img.src = data.poster;
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching poster:', error);
-      });
+      .then(data => { if (data.poster) img.src = data.poster; });
   });
+
+  function createSlider(id, minEl, maxEl, outMin, outMax, rangeMin, rangeMax, startMin, startMax) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    noUiSlider.create(el, {
+      start: [startMin, startMax],
+      connect: true,
+      range: { min: rangeMin, max: rangeMax },
+      step: 1,
+      tooltips: false,
+      format: { to: v => Math.round(v), from: v => Number(v) }
+    });
+    el.noUiSlider.on('update', (values) => {
+      document.getElementById(minEl).value = values[0];
+      document.getElementById(maxEl).value = values[1];
+      document.getElementById(outMin).textContent = values[0];
+      document.getElementById(outMax).textContent = values[1];
+    });
+  }
+
+  createSlider('tomatoSlider', 'min_score', 'max_score', 'minScoreOut', 'maxScoreOut', 0, 100, {{ min_score or 0 }}, {{ max_score or 100 }});
+  createSlider('runtimeSlider', 'min_runtime', 'max_runtime', 'minRuntimeOut', 'maxRuntimeOut', 0, 360, {{ min_runtime or 0 }}, {{ max_runtime or 360 }});
+  createSlider('criticSlider', 'min_critic', 'max_critic', 'minCriticOut', 'maxCriticOut', 0, 100, {{ min_critic or 0 }}, {{ max_critic or 100 }});
+  createSlider('theaterYearSlider', 'min_year_theaters', 'max_year_theaters', 'minTheaterYearOut', 'maxTheaterYearOut', 1900, 2025, {{ min_year_theaters or 1900 }}, {{ max_year_theaters or 2025 }});
+  createSlider('streamingYearSlider', 'min_year_streaming', 'max_year_streaming', 'minStreamingYearOut', 'maxStreamingYearOut', 1990, 2025, {{ min_year_streaming or 1990 }}, {{ max_year_streaming or 2025 }});
 });
 </script>
 {% endblock %}
